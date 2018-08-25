@@ -8,6 +8,21 @@
   <body>
     <div class="wrapper">
       <h1>Welcome to the Quoting Dojo</h1>
+      <fieldset>
+        <legend>Add a Quote</legend>
+        <form action="/quotes" method="post">
+          <div>
+            <label for="name">Your Name:</label>
+            <input type="text" name="name">
+          </div>
+          <div>
+            <label for="quote">Your Quote:</label>
+            <textarea name="quote"></textarea>
+          </div>
+          <button id="add">Add my quote!</button>
+        </form>
+        <a id="quotes" href="/quotes">Skip to quotes!</a>
+      </fieldset>
     </div>
   </body>
 </html>

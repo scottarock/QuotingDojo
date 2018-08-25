@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Quotes</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1>Here are the Awesome quotes!</h1>
+      <% for ( const quote of quotes ) { %>
+        <div class="fullquote">
+          <p class="quote">"<%= quote.quote %>"</p>
+          <p class="name">- <%= quote.name %></p>
+        </div>
+      <% } %>
+    </div>
+  </body>
+</html>
