@@ -19,6 +19,13 @@
             <label for="quote">Your Quote:</label>
             <textarea name="quote"></textarea>
           </div>
+          <% if ( messages ) { %>
+            <% if ( messages.info ) { %>
+              <% for ( const message of messages.quote ) { %>
+                <h3><%= message %></h3>
+              <% } %>
+            <% } %>
+          <% } %>
           <button id="add">Add my quote!</button>
         </form>
         <a id="quotes" href="/quotes">Skip to quotes!</a>

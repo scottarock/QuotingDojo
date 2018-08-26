@@ -1,7 +1,8 @@
 const express = require('express'),
+      session = require('express-session'),
       parser = require('body-parser'),
       path = require('path'),
-      dateFormatter = require('./modules/dateFormatter'),
+      formatter = require('./modules/dateFormatter'),
       mongoose = require('mongoose'),
       { Schema } = mongoose,
       port = process.env.PORT || 8000,
@@ -13,6 +14,7 @@ mongoose.connect(
   { useNewUrlParser: true }
 );
 
+// create the quote schema
 const quoteSchema = new Schema({
   name: {
     type: String,
@@ -26,20 +28,29 @@ const quoteSchema = new Schema({
     trim: true,
   },
 }, { timestamps: true });
+// add a formatted date/time to the found quotes
 quoteSchema.post('find', results => {
   for ( result of results ) {
-    result.formattedDate = dateFormatter.formatDate(result.createdAt);
+    result.formattedDate = formatter.formatDate(result.createdAt);
   }
 });
+// register the model
 const Quote = mongoose.model('Quote', quoteSchema);
 
+// set up the application
 app.set('view engine', 'ejs');
 app.set('views', path.resolve('views'));
 app.use(express.static(path.resolve('static')));
 app.use(parser.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'itsasecret',
+  resave: false,
+  saveUninitialized: true,
+}));
 
+// routes for the app
 app.get('/', function(request, response) {
-  response.render('index');
+  response.render('index', { messages: request.session.errors });
 });
 
 app.get('/quotes', function(request, response) {
@@ -50,8 +61,11 @@ app.get('/quotes', function(request, response) {
 
 app.post('/quotes', function(request, response) {
   Quote.create(request.body)
-    .then(response.redirect('/quotes'))
+    .then(quote => {
+      response.redirect('/quotes');
+    })
     .catch(console.log);
 });
 
+// start app listening for clients
 app.listen(port, console.log(`quoting app listening on port ${port}`));
