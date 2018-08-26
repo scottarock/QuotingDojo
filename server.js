@@ -1,6 +1,7 @@
 const express = require('express'),
       parser = require('body-parser'),
       path = require('path'),
+      dateFormatter = require('./modules/dateFormatter'),
       mongoose = require('mongoose'),
       { Schema } = mongoose,
       port = process.env.PORT || 8000,
@@ -25,6 +26,11 @@ const quoteSchema = new Schema({
     trim: true,
   },
 }, { timestamps: true });
+quoteSchema.post('find', results => {
+  for ( result of results ) {
+    result.formattedDate = dateFormatter.formatDate(result.createdAt);
+  }
+});
 const Quote = mongoose.model('Quote', quoteSchema);
 
 app.set('view engine', 'ejs');
@@ -37,13 +43,12 @@ app.get('/', function(request, response) {
 });
 
 app.get('/quotes', function(request, response) {
-  Quote.find({})
+  Quote.find({}).sort('-createdAt')
     .then(quotes => response.render('quotes/index', { quotes }))
     .catch(console.log);
 });
 
 app.post('/quotes', function(request, response) {
-  console.log(request.body);
   Quote.create(request.body)
     .then(response.redirect('/quotes'))
     .catch(console.log);

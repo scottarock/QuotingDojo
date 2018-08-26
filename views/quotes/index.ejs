@@ -11,9 +11,10 @@
       <% for ( const quote of quotes ) { %>
         <div class="fullquote">
           <p class="quote">"<%= quote.quote %>"</p>
-          <p class="name">- <%= quote.name %></p>
+          <p class="name">- <%= quote.name %> at <%= quote.formattedDate %></p>
         </div>
       <% } %>
+      <a id= "quotes" href="/">Add another quote!</a>
     </div>
   </body>
 </html>
