@@ -1,5 +1,4 @@
 const express = require('express'),
-      session = require('express-session'),
       parser = require('body-parser'),
       path = require('path'),
       formatter = require('./modules/dateFormatter'),
@@ -13,6 +12,8 @@ mongoose.connect(
   'mongodb://localhost:27017/quotes',
   { useNewUrlParser: true }
 );
+
+let errMessages = [];
 
 // create the quote schema
 const quoteSchema = new Schema({
@@ -42,15 +43,12 @@ app.set('view engine', 'ejs');
 app.set('views', path.resolve('views'));
 app.use(express.static(path.resolve('static')));
 app.use(parser.urlencoded({ extended: true }));
-app.use(session({
-  secret: 'itsasecret',
-  resave: false,
-  saveUninitialized: true,
-}));
 
 // routes for the app
 app.get('/', function(request, response) {
-  response.render('index', { messages: request.session.errors });
+  console.log(errMessages);
+  response.render('index', { messages: errMessages });
+  errMessages = [];
 });
 
 app.get('/quotes', function(request, response) {
@@ -64,7 +62,11 @@ app.post('/quotes', function(request, response) {
     .then(quote => {
       response.redirect('/quotes');
     })
-    .catch(console.log);
+    .catch(error => {
+      errMessages = Object.keys(error.errors)
+        .map(key => error.errors[key].message);
+      response.redirect('/');
+    });
 });
 
 // start app listening for clients

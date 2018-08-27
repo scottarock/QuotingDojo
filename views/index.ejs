@@ -19,11 +19,9 @@
             <label for="quote">Your Quote:</label>
             <textarea name="quote"></textarea>
           </div>
-          <% if ( messages ) { %>
-            <% if ( messages.info ) { %>
-              <% for ( const message of messages.quote ) { %>
-                <h3><%= message %></h3>
-              <% } %>
+          <% if ( messages.length > 0 ) { %>
+            <% for ( const message of messages ) { %>
+              <p class="warning"><%= message %></p>
             <% } %>
           <% } %>
           <button id="add">Add my quote!</button>

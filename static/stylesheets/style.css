@@ -64,3 +64,8 @@ a#quotes {
   text-align: right;
   color: blue;
 }
+
+p.warning {
+  padding: 3px 0px;
+  color: red;
+}
