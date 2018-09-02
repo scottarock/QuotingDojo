@@ -1,14 +1,22 @@
 const mongoose = require('mongoose'),
-      { Schema } = mongoose,
-      formatter = require('./quoteDateFormatter');
+      { Schema } = mongoose;
+
+function formatDate(date) {
+
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  let ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+ minutes : minutes;
+  let strTime = hours + ':' + minutes + ' ' + ampm;
+  return strTime + " " + monthNames[date.getMonth()] + " " + date.getDate() + " " + date.getFullYear() ;
+}
 
 module.exports = function() {
 
-  mongoose.Promise = global.Promise;
-  mongoose.connect(
-    'mongodb://localhost:27017/quotes',
-    { useNewUrlParser: true }
-  );
 
   // create the quote schema
   const quoteSchema = new Schema({
@@ -27,7 +35,7 @@ module.exports = function() {
   // add a formatted date/time to the found quotes
   quoteSchema.post('find', results => {
     for ( result of results ) {
-      result.formattedDate = formatter.formatDate(result.createdAt);
+      result.formattedDate = formatDate(result.createdAt);
     }
   });
   // register the model
