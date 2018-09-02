@@ -13,8 +13,6 @@ mongoose.connect(
   { useNewUrlParser: true }
 );
 
-let errMessages = [];
-
 // create the quote schema
 const quoteSchema = new Schema({
   name: {
@@ -44,30 +42,7 @@ app.set('views', path.resolve('views'));
 app.use(express.static(path.resolve('static')));
 app.use(parser.urlencoded({ extended: true }));
 
-// routes for the app
-app.get('/', function(request, response) {
-  console.log(errMessages);
-  response.render('index', { messages: errMessages });
-  errMessages = [];
-});
-
-app.get('/quotes', function(request, response) {
-  Quote.find({}).sort('-createdAt')
-    .then(quotes => response.render('quotes/index', { quotes }))
-    .catch(console.log);
-});
-
-app.post('/quotes', function(request, response) {
-  Quote.create(request.body)
-    .then(quote => {
-      response.redirect('/quotes');
-    })
-    .catch(error => {
-      errMessages = Object.keys(error.errors)
-        .map(key => error.errors[key].message);
-      response.redirect('/');
-    });
-});
+require('./server/config/routes')(app);
 
 // start app listening for clients
 app.listen(port, console.log(`quoting app listening on port ${port}`));
